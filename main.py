@@ -2,6 +2,9 @@ import flet as ft
 import flet.map as map
 import random
 
+from PIL.ImageOps import expand
+
+
 class MapFrame(ft.Container):
     def __init__(self, page: ft.Page):
         super().__init__()
@@ -166,27 +169,25 @@ def main(page: ft.Page):
 
 
     main_row = ft.Column(alignment=ft.MainAxisAlignment.START)
-    label = ft.Text("Aqq")
+    label = ft.Text("Wprowadź kod otrzymany w zawiadomieniu",
+                    text_align=ft.TextAlign.CENTER,
+                    col={"sm": 12, "md": 4, "xl": 4})
     # main_row.controls.append(label)
 
     def submit_on_clik(e):
         mf.visible = not mf.visible
-        if int(query.value):
-            value.value=str(int(value.value) + int(query.value))
         page.update()
 
-    query = ft.TextField(label="Kod dostępu:")
-    submit = ft.ElevatedButton("Wprowadź", on_click= lambda e: submit_on_clik(e))
-    value = ft.Text("0")
-    try:
-        mf = MapFrame(page)
-    except Exception as er:
-        page.add(ft.Text(str(er)))
-        page.update()
+    query = ft.TextField(label="Kod dostępu:",
+                    col={"sm": 6, "md": 4, "xl": 4})
+    submit = ft.ElevatedButton("Wprowadź", on_click= lambda e: submit_on_clik(e),
+                    col={"sm": 6, "md": 4, "xl": 4})
+
+    mf = MapFrame(page)
     mf.visible = False
     # main_row.controls.append(mf)
 
-    page.add(ft.Row([query, submit, value], alignment=ft.MainAxisAlignment.CENTER))
+    page.add(ft.ResponsiveRow([label, query, submit], alignment=ft.MainAxisAlignment.CENTER, vertical_alignment=ft.CrossAxisAlignment.CENTER))
     page.add(mf)
 
     page.update()
