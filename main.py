@@ -167,9 +167,12 @@ class MapFrame(ft.Container):
 
 def main(page: ft.Page):
 
+    with open("requirements.txt", "r") as file:
+        lines = file.readlines()
+
 
     main_row = ft.Column(alignment=ft.MainAxisAlignment.START)
-    label = ft.Text("Wprowadź kod otrzymany w zawiadomieniu",
+    label = ft.Text(f"Wprowadź kod otrzymany w zawiadomieniu {lines[0]}",
                     text_align=ft.TextAlign.CENTER,
                     col={"sm": 12, "md": 4, "xl": 4})
     # main_row.controls.append(label)
