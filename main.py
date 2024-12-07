@@ -178,7 +178,11 @@ def main(page: ft.Page):
     query = ft.TextField(label="Kod dostępu:")
     submit = ft.ElevatedButton("Wprowadź", on_click= lambda e: submit_on_clik(e))
     value = ft.Text("0")
-    mf = MapFrame(page)
+    try:
+        mf = MapFrame(page)
+    except Exception as er:
+        page.add(ft.Text(str(er)))
+        page.update()
     mf.visible = False
     # main_row.controls.append(mf)
 
