@@ -40,7 +40,14 @@ class MapFrame(ft.Container):
 
 
 
-        label = ft.Text("Click anywhere to add a Marker, right-click to add a CircleMarker.")
+        label = ft.Container(content=ft.Row(
+                                      [ft.Text("Click anywhere to add a Marker, right-click to add a CircleMarker.")]
+        ),
+            border_radius=ft.border_radius.all(10),
+                          bgcolor=ft.colors.with_opacity(0.6, ft.colors.PRIMARY_CONTAINER),
+                          padding=5,
+                          blur=15)
+
         main_map = map.Map(
                     expand=True,
                     initial_center=map.MapLatitudeLongitude(15, 10),
@@ -164,15 +171,18 @@ def main(page: ft.Page):
 
     def submit_on_clik(e):
         mf.visible = not mf.visible
+        if int(query.value):
+            value.value=str(int(value.value) + int(query.value))
         page.update()
 
     query = ft.TextField(label="Kod dostępu:")
     submit = ft.ElevatedButton("Wprowadź", on_click= lambda e: submit_on_clik(e))
+    value = ft.Text("0")
     mf = MapFrame(page)
     mf.visible = False
     # main_row.controls.append(mf)
 
-    page.add(ft.Row([query, submit], alignment=ft.MainAxisAlignment.CENTER))
+    page.add(ft.Row([query, submit, value], alignment=ft.MainAxisAlignment.CENTER))
     page.add(mf)
 
     page.update()
