@@ -167,8 +167,10 @@ class MapFrame(ft.Container):
 
 def main(page: ft.Page):
 
-    with open("requirements.txt", "r") as file:
-        lines = file.readlines()
+    lines = ["a"]
+
+    # with open("requirements.txt", "r") as file:
+        # lines = file.readlines()
 
 
     main_row = ft.Column(alignment=ft.MainAxisAlignment.START)
