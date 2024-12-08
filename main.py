@@ -2,8 +2,6 @@ import flet as ft
 import flet.map as map
 import random
 
-from PIL.ImageOps import expand
-
 
 class MapFrame(ft.Container):
     def __init__(self, page: ft.Page):
