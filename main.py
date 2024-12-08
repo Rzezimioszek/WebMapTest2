@@ -175,9 +175,8 @@ def main(page: ft.Page):
         # lines = file.readlines()
 
 
-    main_row = ft.Column(alignment=ft.MainAxisAlignment.START)
+
     label = ft.Text(f"Wprowadź kod otrzymany w zawiadomieniu", # {lines[0]}",
-                    text_align=ft.TextAlign.CENTER
                     )
     # main_row.controls.append(label)
 
@@ -189,10 +188,10 @@ def main(page: ft.Page):
     submit = ft.ElevatedButton("Wprowadź", on_click= lambda e: submit_on_clik(e))
 
     mf = MapFrame(page)
-    mf.visible = False
+    #mf.visible = False
     # main_row.controls.append(mf)
 
-    page.add(ft.Row([label, query, submit], alignment=ft.MainAxisAlignment.CENTER, vertical_alignment=ft.CrossAxisAlignment.CENTER))
+    page.add(ft.Row([label, query, submit], alignment=ft.MainAxisAlignment.CENTER))
     page.add(mf)
 
     page.update()
