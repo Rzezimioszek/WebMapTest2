@@ -7,7 +7,7 @@ class MapFrame(ft.Container):
     def __init__(self, page: ft.Page):
         super().__init__()
 
-        # self.expand = 1
+        self.expand = 1
         self.border_radius = ft.border_radius.all(10)
 
         marker_layer_ref = ft.Ref[map.MarkerLayer]()
