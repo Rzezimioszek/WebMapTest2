@@ -53,8 +53,8 @@ class MapFrame(ft.Container):
 
         main_map = map.Map(
                     expand=True,
-                    initial_center=map.MapLatitudeLongitude(15, 10),
-                    initial_zoom=4.2,
+                    initial_center=map.MapLatitudeLongitude(50.965125,18.286120),
+                    initial_zoom=12,
                     interaction_configuration=map.MapInteractionConfiguration(
                         flags=map.MapInteractiveFlag.ALL
                     ),
@@ -66,6 +66,8 @@ class MapFrame(ft.Container):
                     layers=[
                         map.TileLayer(
                             url_template="https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                            # url_template="./{z}/{x}/{y}.jpg",
+                            # url_template="http://localhost:8000/{z}/{x}/{y}.jpg",
                             on_image_error=lambda e: print("TileLayer Error"),
                         ),
                         map.RichAttribution(
@@ -92,7 +94,7 @@ class MapFrame(ft.Container):
                             markers=[
                                 map.Marker(
                                     content=ft.Icon(ft.Icons.LOCATION_ON),
-                                    coordinates=map.MapLatitudeLongitude(30, 15),
+                                    coordinates=map.MapLatitudeLongitude(50.965125,18.286120),
                                 ),
                                 map.Marker(
                                     content=ft.Icon(ft.Icons.LOCATION_ON),
@@ -109,7 +111,7 @@ class MapFrame(ft.Container):
                             circles=[
                                 map.CircleMarker(
                                     radius=10,
-                                    coordinates=map.MapLatitudeLongitude(16, 24),
+                                    coordinates=map.MapLatitudeLongitude(50.965125,18.306120),
                                     color=ft.Colors.RED,
                                     border_color=ft.Colors.BLUE,
                                     border_stroke_width=4,
