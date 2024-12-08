@@ -175,24 +175,22 @@ def main(page: ft.Page):
 
     main_row = ft.Column(alignment=ft.MainAxisAlignment.START)
     label = ft.Text(f"Wprowadź kod otrzymany w zawiadomieniu", # {lines[0]}",
-                    text_align=ft.TextAlign.CENTER,
-                    col={"sm": 12, "md": 4, "xl": 4})
+                    text_align=ft.TextAlign.CENTER
+                    )
     # main_row.controls.append(label)
 
     def submit_on_clik(e):
         mf.visible = not mf.visible
         page.update()
 
-    query = ft.TextField(label="Kod dostępu:",
-                    col={"sm": 6, "md": 4, "xl": 4})
-    submit = ft.ElevatedButton("Wprowadź", on_click= lambda e: submit_on_clik(e),
-                    col={"sm": 6, "md": 4, "xl": 4})
+    query = ft.TextField(label="Kod dostępu:")
+    submit = ft.ElevatedButton("Wprowadź", on_click= lambda e: submit_on_clik(e))
 
     mf = MapFrame(page)
     mf.visible = False
     # main_row.controls.append(mf)
 
-    page.add(ft.ResponsiveRow([label, query, submit], alignment=ft.MainAxisAlignment.CENTER, vertical_alignment=ft.CrossAxisAlignment.CENTER))
+    page.add(ft.Row([label, query, submit], alignment=ft.MainAxisAlignment.CENTER, vertical_alignment=ft.CrossAxisAlignment.CENTER))
     page.add(mf)
 
     page.update()
