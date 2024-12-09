@@ -6,8 +6,10 @@ import random
 
 
 class MapFrame(ft.Container):
-    def __init__(self, page: ft.Page):
+    def __init__(self, page: ft.Page, lines):
         super().__init__()
+
+        self.lines = lines
 
         self.expand = 1
         self.border_radius = ft.border_radius.all(10)
@@ -15,7 +17,7 @@ class MapFrame(ft.Container):
         marker_layer_ref = ft.Ref[map.MarkerLayer]()
         self.circle_layer_ref = ft.Ref[map.CircleLayer]()
 
-        self.pkt = map.MapLatitudeLongitude(50.965125,18.286120)
+        self.pkt = map.MapLatitudeLongitude(50.9476241, 23.1433150)
 
         def handle_tap(e: map.MapTapEvent):
             print(e)
@@ -52,7 +54,7 @@ class MapFrame(ft.Container):
 
         main_map = map.Map(
                     expand=True,
-                    initial_center=map.MapLatitudeLongitude(50.965125,18.286120),
+                    initial_center=map.MapLatitudeLongitude(50.9476241, 23.1433150),
                     initial_zoom=12,
                     interaction_configuration=map.MapInteractionConfiguration(
                         flags=map.MapInteractiveFlag.ALL
@@ -64,7 +66,8 @@ class MapFrame(ft.Container):
                     on_event=lambda e: print(e),
                     layers=[
                         map.TileLayer(
-                            url_template="https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                            # url_template="https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                            url_template="https://mt1.google.com/vt/lyrs=s&hl=pl&x={x}&y={y}&z={z}",
                             # url_template="./{z}/{x}/{y}.jpg",
                             # url_template="http://localhost:8000/{z}/{x}/{y}.jpg",
                             on_image_error=lambda e: print("TileLayer Error"),
@@ -93,7 +96,7 @@ class MapFrame(ft.Container):
                             markers=[
                                 map.Marker(
                                     content=ft.Icon(ft.Icons.LOCATION_ON),
-                                    coordinates=map.MapLatitudeLongitude(50.965125,18.286120),
+                                    coordinates=map.MapLatitudeLongitude(50.9476241,23.1433150),
                                 ),
                             ],
                         ),
@@ -152,7 +155,11 @@ class MapFrame(ft.Container):
         self.content=map_row
 
         def elBtn_click(e):
-            webbrowser.open(f"https://www.google.pl/maps/place/{self.pkt.latitude:.5f},{self.pkt.longitude:.5f}")
+            url = f"https://www.google.pl/maps/place/{self.pkt.latitude:.5f},{self.pkt.longitude:.5f}"
+            try:
+                webbrowser.open(url)
+            except Exception as er:
+                page.launch_url(url)
 
 
         elBtn = ft.ElevatedButton("Nawiguj", on_click=lambda e: elBtn_click(e))
@@ -183,19 +190,14 @@ class MapFrame(ft.Container):
 
 
 
-        if value == "1000":
+        for line in self.lines:
+            spl = line.split("\t")
 
-            coords = [[50.965130, 18.286120], [50.965135, 18.286120], [50.965140, 18.286120]]
+            if value in spl[0]:
 
-            for coord in coords:
-                self.add_circle(coord[0], coord[1])
+                self.add_circle(float(spl[2]), float(spl[1]))
 
-        if value == "1001":
 
-            coords = [[50.965130, 18.286120], [50.965125, 18.286120], [50.965120, 18.286120]]
-
-            for coord in coords:
-                self.add_circle(coord[0], coord[1])
 
 
 
@@ -206,6 +208,10 @@ def main(page: ft.Page):
 
     # with open("requirements.txt", "r") as file:
         # lines = file.readlines()
+
+    # with open("assets/punkty.txt", "r") as file:
+    with open("punkty.txt", "r") as file:
+        lines = file.readlines()
 
 
 
@@ -225,7 +231,7 @@ def main(page: ft.Page):
     submit = ft.ElevatedButton("Wprowadź", on_click= lambda e: submit_on_clik(e),
                                col={"xs": 12, "sm": 12, "md": 4})
 
-    mf = MapFrame(page)
+    mf = MapFrame(page, lines)
     #mf.visible = False
     # main_row.controls.append(mf)
 
@@ -235,4 +241,4 @@ def main(page: ft.Page):
     page.update()
 
 if __name__ == "__main__":
-    site = ft.app(main, view=ft.AppView.WEB_BROWSER)
+    site = ft.app(main, view=ft.AppView.WEB_BROWSER, assets_dir="assets")
