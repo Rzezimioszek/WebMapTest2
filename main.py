@@ -1,3 +1,5 @@
+import webbrowser
+
 import flet as ft
 import flet.map as map
 import random
@@ -11,12 +13,19 @@ class MapFrame(ft.Container):
         self.border_radius = ft.border_radius.all(10)
 
         marker_layer_ref = ft.Ref[map.MarkerLayer]()
-        circle_layer_ref = ft.Ref[map.CircleLayer]()
+        self.circle_layer_ref = ft.Ref[map.CircleLayer]()
+
+        self.pkt = map.MapLatitudeLongitude(50.965125,18.286120)
 
         def handle_tap(e: map.MapTapEvent):
             print(e)
             if e.name == "tap":
-                    marker_layer_ref.current.markers.append(
+                #webbrowser.open("https://bitly.com/")
+
+                self.pkt = e.coordinates
+
+                marker_layer_ref.current.markers.clear()
+                marker_layer_ref.current.markers.append(
                         map.Marker(
                             content=ft.Icon(
                                 ft.Icons.LOCATION_ON, color=ft.cupertino_colors.DESTRUCTIVE_RED
@@ -24,16 +33,8 @@ class MapFrame(ft.Container):
                             coordinates=e.coordinates,
                         )
                     )
-            elif e.name == "secondary_tap":
-                    circle_layer_ref.current.circles.append(
-                        map.CircleMarker(
-                            radius=random.randint(5, 10),
-                            coordinates=e.coordinates,
-                            color=ft.Colors.RED,
-                            border_color=ft.Colors.BLUE,
-                            border_stroke_width=4,
-                        )
-                    )
+
+            # webbrowser.open(f"https://www.google.pl/maps/place/{e.coordinates.latitude:.5f},{e.coordinates.longitude:.5f}")
             page.update()
 
         def handle_event(e: map.MapEvent):
@@ -57,9 +58,9 @@ class MapFrame(ft.Container):
                         flags=map.MapInteractiveFlag.ALL
                     ),
                     on_init=lambda e: print(f"Initialized Map"),
-                    on_tap=handle_tap,
-                    on_secondary_tap=handle_tap,
-                    on_long_press=handle_tap,
+                    on_tap=lambda e: handle_tap(e),
+                    on_secondary_tap=lambda e: handle_tap(e),
+                    on_long_press=lambda e: handle_tap(e),
                     on_event=lambda e: print(e),
                     layers=[
                         map.TileLayer(
@@ -94,22 +95,14 @@ class MapFrame(ft.Container):
                                     content=ft.Icon(ft.Icons.LOCATION_ON),
                                     coordinates=map.MapLatitudeLongitude(50.965125,18.286120),
                                 ),
-                                map.Marker(
-                                    content=ft.Icon(ft.Icons.LOCATION_ON),
-                                    coordinates=map.MapLatitudeLongitude(10, 10),
-                                ),
-                                map.Marker(
-                                    content=ft.Icon(ft.Icons.LOCATION_ON),
-                                    coordinates=map.MapLatitudeLongitude(25, 45),
-                                ),
                             ],
                         ),
                         map.CircleLayer(
-                            ref=circle_layer_ref,
+                            ref=self.circle_layer_ref,
                             circles=[
                                 map.CircleMarker(
                                     radius=10,
-                                    coordinates=map.MapLatitudeLongitude(50.965125,18.306120),
+                                    coordinates=map.MapLatitudeLongitude(10,10),
                                     color=ft.Colors.RED,
                                     border_color=ft.Colors.BLUE,
                                     border_stroke_width=4,
@@ -158,10 +151,52 @@ class MapFrame(ft.Container):
 
         self.content=map_row
 
+        def elBtn_click(e):
+            webbrowser.open(f"https://www.google.pl/maps/place/{self.pkt.latitude:.5f},{self.pkt.longitude:.5f}")
+
+
+        elBtn = ft.ElevatedButton("Nawiguj", on_click=lambda e: elBtn_click(e))
+
         self.content = ft.Stack(controls=[main_map,
-                                          ft.Row([label], alignment=ft.MainAxisAlignment.END, bottom=5, left=5),
+                                          ft.Row([elBtn], alignment=ft.MainAxisAlignment.CENTER, bottom=5, right=5),
                                           ]
                                 , expand=1)
+
+
+    def clear_layers(self):
+        self.circle_layer_ref.current.circles.clear()
+
+    def add_circle(self, lat, lon):
+        self.circle_layer_ref.current.circles.append(
+            map.CircleMarker(
+                radius=5,
+                coordinates=map.MapLatitudeLongitude(lat, lon),
+                color=ft.Colors.RED,
+                border_color=ft.Colors.YELLOW,
+                border_stroke_width=3,
+            )
+        )
+
+        self.page.update()
+
+    def load_values(self, value):
+
+
+
+        if value == "1000":
+
+            coords = [[50.965130, 18.286120], [50.965135, 18.286120], [50.965140, 18.286120]]
+
+            for coord in coords:
+                self.add_circle(coord[0], coord[1])
+
+        if value == "1001":
+
+            coords = [[50.965130, 18.286120], [50.965125, 18.286120], [50.965120, 18.286120]]
+
+            for coord in coords:
+                self.add_circle(coord[0], coord[1])
+
 
 
 
@@ -175,21 +210,26 @@ def main(page: ft.Page):
 
 
     label = ft.Text(f"Wprowadź kod otrzymany w zawiadomieniu", # {lines[0]}",
-                    )
+                    col={"xs": 12, "sm": 12, "md": 4})
     # main_row.controls.append(label)
 
     def submit_on_clik(e):
-        mf.visible = not mf.visible
+        #mf.visible = not mf.visible
+        mf.clear_layers()
+        mf.load_values(query.value)
+        #query.value
         page.update()
 
-    query = ft.TextField(label="Kod dostępu:")
-    submit = ft.ElevatedButton("Wprowadź", on_click= lambda e: submit_on_clik(e))
+    query = ft.TextField(label="Kod dostępu:",
+                         col={"xs": 12, "sm": 12, "md": 4})
+    submit = ft.ElevatedButton("Wprowadź", on_click= lambda e: submit_on_clik(e),
+                               col={"xs": 12, "sm": 12, "md": 4})
 
     mf = MapFrame(page)
     #mf.visible = False
     # main_row.controls.append(mf)
 
-    page.add(ft.Row([label, query, submit], alignment=ft.MainAxisAlignment.CENTER))
+    page.add(ft.ResponsiveRow([label, query, submit], alignment=ft.MainAxisAlignment.CENTER))
     page.add(mf)
 
     page.update()
