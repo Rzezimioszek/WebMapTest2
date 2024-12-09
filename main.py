@@ -209,8 +209,8 @@ def main(page: ft.Page):
     # with open("requirements.txt", "r") as file:
         # lines = file.readlines()
 
-    # with open("assets/punkty.txt", "r") as file:
-    with open("punkty.txt", "r") as file:
+    with open("assets/punkty.txt", "r") as file:
+    #with open("punkty.txt", "r") as file:
         lines = file.readlines()
 
 
