@@ -4,6 +4,8 @@ import flet as ft
 import flet.map as map
 import random
 
+import requests
+
 
 class MapFrame(ft.Container):
     def __init__(self, page: ft.Page, lines):
@@ -67,9 +69,9 @@ class MapFrame(ft.Container):
                     layers=[
                         map.TileLayer(
                             # url_template="https://tile.openstreetmap.org/{z}/{x}/{y}.png",
-                            url_template="https://mt1.google.com/vt/lyrs=s&hl=pl&x={x}&y={y}&z={z}",
+                            #url_template="https://mt1.google.com/vt/lyrs=s&hl=pl&x={x}&y={y}&z={z}",
                             # url_template="./{z}/{x}/{y}.jpg",
-                            # url_template="http://localhost:8000/{z}/{x}/{y}.jpg",
+                            url_template="https://raw.githack.com/Rzezimioszek/WebMapTest/main/{z}/{x}/{y}.png",
                             on_image_error=lambda e: print("TileLayer Error"),
                         ),
                         map.RichAttribution(
@@ -206,8 +208,12 @@ def main(page: ft.Page):
 
     # lines = ["a"]
 
-    with open("github.com/Rzezimioszek/WebMapTest2/blob/9445f5ef6688ff60b3acbeecaa78f3c9b2b750f5/assets/punkty.txt", "r") as file:
-        lines = file.readlines()
+    #with open("github.com/Rzezimioszek/WebMapTest2/blob/9445f5ef6688ff60b3acbeecaa78f3c9b2b750f5/assets/punkty.txt", "r") as file:
+        #lines = file.readlines()
+
+    file = requests.get("https://rzezimioszek.github.io/Files/pliki/punkty.txt").text
+    print(str(file))
+    lines = str(file).split("\n")
 
     #with open("assets/punkty.txt", "r") as file:
     #with open("punkty.txt", "r") as file:
