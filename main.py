@@ -15,6 +15,7 @@ class MapFrame(ft.Container):
 
         self.expand = 1
         self.border_radius = ft.border_radius.all(10)
+        self.bgcolor = ft.colors.WHITE
 
         marker_layer_ref = ft.Ref[map.MarkerLayer]()
         self.circle_layer_ref = ft.Ref[map.CircleLayer]()
@@ -71,7 +72,8 @@ class MapFrame(ft.Container):
                             # url_template="https://tile.openstreetmap.org/{z}/{x}/{y}.png",
                             #url_template="https://mt1.google.com/vt/lyrs=s&hl=pl&x={x}&y={y}&z={z}",
                             # url_template="./{z}/{x}/{y}.jpg",
-                            url_template="https://raw.githack.com/Rzezimioszek/WebMapTest/main/{z}/{x}/{y}.png",
+                            #url_template="https://raw.githack.com/Rzezimioszek/WebMapTest/main/{z}/{x}/{y}.png",
+                            url_template="https://raw.githack.com/Rzezimioszek/WebMapTest/main/{z}/{x}/{y}.jpg",
                             on_image_error=lambda e: print("TileLayer Error"),
                         ),
                         map.RichAttribution(
