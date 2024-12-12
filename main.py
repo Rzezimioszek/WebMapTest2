@@ -6,6 +6,9 @@ import random
 
 import requests
 
+class PointButton(ft.TextButton):
+    def __init__(self, page: ft.Page, lines):
+        super().__init__()
 
 class MapFrame(ft.Container):
     def __init__(self, page: ft.Page, lines):
@@ -207,11 +210,12 @@ class MapFrame(ft.Container):
 
         self.page.update()
 
-    def point_zoom(self, lat, lon):
-        print(f"click! {lat}\t{lon}")
-        self.main_map.center_on(
-            point=map.MapLatitudeLongitude(lat, lon),
-            zoom=19
+    def point_zoom(self, e):
+        spl = str(e.control.text).split(" ")
+        print(f"click! {e.control.text}")
+        self.main_map.move_to(
+            destination=map.MapLatitudeLongitude(float(spl[1]), float(spl[2])),
+            #zoom=19
         )
         self.page.update()
 
@@ -219,17 +223,26 @@ class MapFrame(ft.Container):
 
         self.listControl.controls.clear()
 
+        btn = dict()
+
+        i = 0
         for line in self.lines:
             spl = line.split("\t")
+            str_btn = f"{spl[0]} {spl[2]} {spl[1]}".replace("\r", "")
+            btn[i] = ft.TextButton(str_btn, on_click=lambda e: self.point_zoom(e))
+
+
 
             if value in spl[0]:
-                self.listControl.controls.append(ft.TextButton(f"{spl[0]}",
-                                                               on_click=lambda e: self.point_zoom(float(spl[2]), float(spl[1]))))
+                self.listControl.controls.append(btn[i])
                 self.add_circle(float(spl[2]), float(spl[1]))
+                i += 1
             elif value == "all":
-                self.listControl.controls.append(ft.TextButton(f"{spl[0]}",
-                                                         on_click=lambda e: self.point_zoom(float(spl[2]), float(spl[1]))))
+                self.listControl.controls.append(btn[i])
                 self.add_circle(float(spl[2]), float(spl[1]))
+                i += 1
+
+
 
 
 
