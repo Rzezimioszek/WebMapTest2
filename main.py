@@ -16,6 +16,7 @@ class MapFrame(ft.Container):
         self.expand = 1
         self.border_radius = ft.border_radius.all(10)
         self.bgcolor = ft.colors.WHITE
+        # self.col=12
 
         marker_layer_ref = ft.Ref[map.MarkerLayer]()
         self.circle_layer_ref = ft.Ref[map.CircleLayer]()
@@ -55,7 +56,7 @@ class MapFrame(ft.Container):
                           padding=5,
                           blur=15)
 
-        main_map = map.Map(
+        self.main_map = map.Map(
                     expand=True,
                     initial_center=map.MapLatitudeLongitude(50.9476241, 23.1433150),
                     initial_zoom=12,
@@ -69,11 +70,14 @@ class MapFrame(ft.Container):
                     on_event=lambda e: print(e),
                     layers=[
                         map.TileLayer(
+                            #max_zoom=16,
+                            min_zoom=10,
                             # url_template="https://tile.openstreetmap.org/{z}/{x}/{y}.png",
                             #url_template="https://mt1.google.com/vt/lyrs=s&hl=pl&x={x}&y={y}&z={z}",
                             # url_template="./{z}/{x}/{y}.jpg",
                             #url_template="https://raw.githack.com/Rzezimioszek/WebMapTest/main/{z}/{x}/{y}.png",
-                            url_template="https://raw.githack.com/Rzezimioszek/WebMapTest/main/{z}/{x}/{y}.jpg",
+                            #url_template="https://raw.githack.com/Rzezimioszek/WebMapTest/main/{z}/{x}/{y}.jpg",
+                            url_template="https://raw.githack.com/Rzezimioszek/Files/main/ortofotomapa/S17K/{z}/{x}/{y}.jpg",
                             on_image_error=lambda e: print("TileLayer Error"),
                         ),
                         map.RichAttribution(
@@ -156,7 +160,7 @@ class MapFrame(ft.Container):
             # main_map
         ])
 
-        self.content=map_row
+        # self.content=map_row
 
         def elBtn_click(e):
             url = f"https://www.google.pl/maps/place/{self.pkt.latitude:.5f},{self.pkt.longitude:.5f}"
@@ -168,8 +172,21 @@ class MapFrame(ft.Container):
 
         elBtn = ft.ElevatedButton("Nawiguj", on_click=lambda e: elBtn_click(e))
 
-        self.content = ft.Stack(controls=[main_map,
-                                          ft.Row([elBtn], alignment=ft.MainAxisAlignment.CENTER, bottom=5, right=5),
+
+        def listBtn_click(e):
+            self.listControl.visible = not self.listControl.visible
+            page.update()
+
+        listBtn = ft.ElevatedButton("Lista punktów", on_click=lambda e: listBtn_click(e))
+
+        self.listControl = ft.ListView(expand=1, spacing=10, padding=20)
+        self.listControl.visible = False
+
+
+        self.content = ft.Stack(controls=[ft.Column([self.main_map,
+                                          self.listControl])
+                                                 ,
+                                          ft.Row([listBtn, elBtn], alignment=ft.MainAxisAlignment.CENTER, bottom=5, right=5),
                                           ]
                                 , expand=1)
 
@@ -180,25 +197,38 @@ class MapFrame(ft.Container):
     def add_circle(self, lat, lon):
         self.circle_layer_ref.current.circles.append(
             map.CircleMarker(
-                radius=5,
+                radius=3,
                 coordinates=map.MapLatitudeLongitude(lat, lon),
                 color=ft.Colors.RED,
-                border_color=ft.Colors.YELLOW,
-                border_stroke_width=3,
+                border_color=ft.Colors.WHITE,
+                border_stroke_width=1,
             )
         )
 
         self.page.update()
 
+    def point_zoom(self, lat, lon):
+        print(f"click! {lat}\t{lon}")
+        self.main_map.center_on(
+            point=map.MapLatitudeLongitude(lat, lon),
+            zoom=19
+        )
+        self.page.update()
+
     def load_values(self, value):
 
-
+        self.listControl.controls.clear()
 
         for line in self.lines:
             spl = line.split("\t")
 
             if value in spl[0]:
-
+                self.listControl.controls.append(ft.TextButton(f"{spl[0]}",
+                                                               on_click=lambda e: self.point_zoom(float(spl[2]), float(spl[1]))))
+                self.add_circle(float(spl[2]), float(spl[1]))
+            elif value == "all":
+                self.listControl.controls.append(ft.TextButton(f"{spl[0]}",
+                                                         on_click=lambda e: self.point_zoom(float(spl[2]), float(spl[1]))))
                 self.add_circle(float(spl[2]), float(spl[1]))
 
 
