@@ -170,7 +170,10 @@ class MapFrame(ft.Container):
             self.main_map.visible = not self.main_map.visible
             page.update()
 
-        listBtn = ft.ElevatedButton("Lista punktów", on_click=lambda e: listBtn_click(e))
+        listBtn = ft.ElevatedButton("Zdjęcia z ziemi",
+                                    color=ft.Colors.WHITE,
+                                    bgcolor=ft.Colors.RED,
+                                    on_click=lambda e: listBtn_click(e))
 
         self.listControl = ft.ListView(expand=1, spacing=5, padding=5)
         # self.listControl.visible = False
@@ -179,7 +182,7 @@ class MapFrame(ft.Container):
         self.image_file = ft.Image(
                                src="https://raw.githack.com/Rzezimioszek/Files/main/ortofotomapa/S17K/18/147891/87921.jpg",
                                fit=ft.ImageFit.FIT_HEIGHT,
-                                height=400,)
+                                height=500,)
 
         self.image_label = ft.Text("",
                                    color=ft.Colors.WHITE,
@@ -202,7 +205,9 @@ class MapFrame(ft.Container):
 
                                                      ], horizontal_alignment=ft.CrossAxisAlignment.CENTER)
                                                  ,
-                                          ft.Row([listBtn, elBtn], alignment=ft.MainAxisAlignment.CENTER, bottom=5, right=5),
+                                          ft.Row([listBtn,
+                                                  #elBtn
+                                                  ], alignment=ft.MainAxisAlignment.CENTER, bottom=5, right=5),
                                           ]
                                 , expand=1)
 
