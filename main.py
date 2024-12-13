@@ -355,4 +355,4 @@ def main(page: ft.Page):
     page.update()
 
 if __name__ == "__main__":
-    site = ft.app(main, view=ft.AppView.WEB_BROWSER, assets_dir="assets")
+    site = ft.app(main, view=ft.AppView.WEB_BROWSER)
