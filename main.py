@@ -182,7 +182,7 @@ class MapFrame(ft.Container):
         self.image_file = ft.Image(
                                src="https://raw.githack.com/Rzezimioszek/Files/main/ortofotomapa/S17K/18/147891/87921.jpg",
                                fit=ft.ImageFit.FIT_HEIGHT,
-                                height=500,)
+                                height=400,)
 
         self.image_label = ft.Text("",
                                    color=ft.Colors.WHITE,
