@@ -352,6 +352,7 @@ def main(page: ft.Page):
 
     page.theme_mode = ft.ThemeMode.LIGHT
 
+
     page.update()
 
 if __name__ == "__main__":
