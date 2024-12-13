@@ -179,13 +179,16 @@ class MapFrame(ft.Container):
         self.image_file = ft.Image(
                                src="https://raw.githack.com/Rzezimioszek/Files/main/ortofotomapa/S17K/18/147891/87868.jpg",
                                fit=ft.ImageFit.FIT_HEIGHT,
-                                height=400)
+                                height=400,)
 
-        self.image_label = ft.Text("", bottom=5, left=5, color=ft.Colors.WHITE, bgcolor=ft.Colors.BLACK)
+        self.image_label = ft.Text("",
+                                   color=ft.Colors.WHITE,
+                                   bgcolor=ft.Colors.BLACK,)
 
         self.img_stack = ft.Stack(controls=[self.image_file,
-                                            self.image_label
-                                            ])
+                                            ft.Container(content=self.image_label, on_click=lambda e:page.launch_url(self.image_file.src), bottom=5, left=5,)
+                                            ],
+                                  )
 
         # extras_row = ft.ResponsiveRow([self.listControl, self.image_stack])
         # extras_row.visible = False
@@ -220,7 +223,7 @@ class MapFrame(ft.Container):
                                 size=12,
                                 weight=ft.FontWeight.BOLD,
                                 foreground=ft.Paint(
-                                color=ft.colors.BLACK,
+                                color=ft.Colors.BLACK,
                                     stroke_width=2,
                                     stroke_join=ft.StrokeJoin.ROUND,
                                     style=ft.PaintingStyle.STROKE,
@@ -233,7 +236,7 @@ class MapFrame(ft.Container):
                 ft.Text(
                     value=f"{name_tag}",
                     # bgcolor=ft.colors.with_opacity(0.2, ft.colors.WHITE),
-                    color=ft.colors.WHITE,
+                    color=ft.Colors.WHITE,
                     size=12,
                     weight=ft.FontWeight.BOLD,
                     text_align=ft.TextAlign.LEFT
