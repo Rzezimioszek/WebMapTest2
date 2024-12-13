@@ -177,7 +177,7 @@ class MapFrame(ft.Container):
 
 
         self.image_file = ft.Image(
-                               src="https://raw.githack.com/Rzezimioszek/Files/main/ortofotomapa/S17K/18/147891/87868.jpg",
+                               src="https://raw.githack.com/Rzezimioszek/Files/main/ortofotomapa/S17K/18/147891/87921.jpg",
                                fit=ft.ImageFit.FIT_HEIGHT,
                                 height=400,)
 
@@ -270,14 +270,14 @@ class MapFrame(ft.Container):
             self.image_file.src = f"https://raw.githack.com/Rzezimioszek/Files/main/pliki/graniczniki/{spl[0]}.jpg"
             self.image_label.value = f"{spl[0]}"
         except:
-            self.image_file.src = "https://raw.githack.com/Rzezimioszek/Files/main/ortofotomapa/S17K/18/147891/87868.jpg"
+            self.image_file.src = "https://raw.githack.com/Rzezimioszek/Files/main/ortofotomapa/S17K/18/147891/87921.jpg"
             self.image_label.value = ""
 
-        print(f"click! {e.control.text}")
-        self.main_map.move_to(
-            destination=map.MapLatitudeLongitude(float(spl[1]), float(spl[2])),
-            #zoom=19
-        )
+        #print(f"click! {e.control.text}")
+        #self.main_map.move_to(
+        #    destination=map.MapLatitudeLongitude(float(spl[1]), float(spl[2])),
+        #    #zoom=19
+        #)
         self.page.update()
 
     def load_values(self, value):
@@ -339,18 +339,23 @@ def main(page: ft.Page):
         #query.value
         page.update()
 
-    query = ft.TextField(label="Kod dostępu:",
+    query = ft.TextField(label="Wprowadź kod otrzymany w zawiadomieniu",
                          on_submit= lambda e: submit_on_clik(e),
-                         col={"xs": 12, "sm": 12, "md": 4})
-    submit = ft.ElevatedButton("Wprowadź",
+                         height=50,
+                         col={"xs": 12, "sm": 12, "md": 3})
+    submit = ft.ElevatedButton("Zatwierdz",
                                on_click= lambda e: submit_on_clik(e),
-                               col={"xs": 12, "sm": 12, "md": 4})
+                               height=50,
+                               col={"xs": 12, "sm": 12, "md": 1})
 
     mf = MapFrame(page, lines)
     #mf.visible = False
     # main_row.controls.append(mf)
 
-    page.add(ft.ResponsiveRow([label, query, submit], alignment=ft.MainAxisAlignment.CENTER))
+    page.add(ft.ResponsiveRow([
+        # label,
+        query,
+        submit], alignment=ft.MainAxisAlignment.CENTER))
     page.add(mf)
 
     page.theme_mode = ft.ThemeMode.LIGHT
