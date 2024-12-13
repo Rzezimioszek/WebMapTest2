@@ -23,6 +23,7 @@ class MapFrame(ft.Container):
 
         marker_layer_ref = ft.Ref[map.MarkerLayer]()
         self.circle_layer_ref = ft.Ref[map.CircleLayer]()
+        self.label_ref = ft.Ref[map.MarkerLayer]()
 
         self.pkt = map.MapLatitudeLongitude(50.9476241, 23.1433150)
 
@@ -82,6 +83,7 @@ class MapFrame(ft.Container):
                             #url_template="https://raw.githack.com/Rzezimioszek/WebMapTest/main/{z}/{x}/{y}.jpg",
                             url_template="https://raw.githack.com/Rzezimioszek/Files/main/ortofotomapa/S17K/{z}/{x}/{y}.jpg",
                             on_image_error=lambda e: print("TileLayer Error"),
+                            pan_buffer=1,
                         ),
                         map.RichAttribution(
                             attributions=[
@@ -111,6 +113,10 @@ class MapFrame(ft.Container):
                                 ),
                             ],
                         ),
+                        map.MarkerLayer(
+                            ref=self.label_ref,
+                            markers=[],
+                        ),
                         map.CircleLayer(
                             ref=self.circle_layer_ref,
                             circles=[
@@ -120,24 +126,6 @@ class MapFrame(ft.Container):
                                     color=ft.Colors.RED,
                                     border_color=ft.Colors.BLUE,
                                     border_stroke_width=4,
-                                ),
-                            ],
-                        ),
-                        map.PolygonLayer(
-                            polygons=[
-                                map.PolygonMarker(
-                                    label="Popular Touristic Area",
-                                    label_text_style=ft.TextStyle(
-                                        color=ft.Colors.BLACK,
-                                        size=15,
-                                        weight=ft.FontWeight.BOLD,
-                                    ),
-                                    color=ft.Colors.with_opacity(0.3, ft.Colors.BLUE),
-                                    coordinates=[
-                                        map.MapLatitudeLongitude(10, 10),
-                                        map.MapLatitudeLongitude(30, 15),
-                                        map.MapLatitudeLongitude(25, 45),
-                                    ],
                                 ),
                             ],
                         ),
@@ -178,7 +166,7 @@ class MapFrame(ft.Container):
 
         def listBtn_click(e):
             self.listControl.visible = not self.listControl.visible
-            self.image_stack.visible = not self.image_stack.visible
+            self.img_stack.visible = not self.img_stack.visible
             self.main_map.visible = not self.main_map.visible
             page.update()
 
@@ -187,19 +175,26 @@ class MapFrame(ft.Container):
         self.listControl = ft.ListView(expand=1, spacing=5, padding=5)
         # self.listControl.visible = False
 
-        self.image_stack = ft.Image(
+
+        self.image_file = ft.Image(
                                src="https://raw.githack.com/Rzezimioszek/Files/main/ortofotomapa/S17K/18/147891/87868.jpg",
                                fit=ft.ImageFit.FIT_HEIGHT,
                                 height=400)
 
+        self.image_label = ft.Text("", bottom=5, left=5, color=ft.Colors.WHITE, bgcolor=ft.Colors.BLACK)
+
+        self.img_stack = ft.Stack(controls=[self.image_file,
+                                            self.image_label
+                                            ])
+
         # extras_row = ft.ResponsiveRow([self.listControl, self.image_stack])
         # extras_row.visible = False
         self.listControl.visible = False
-        self.image_stack.visible = False
+        self.img_stack.visible = False
 
 
         self.content = ft.Stack(controls=[ft.Column([self.main_map,
-                                                     self.image_stack,
+                                                     self.img_stack,
                                                      self.listControl,
 
                                                      ], horizontal_alignment=ft.CrossAxisAlignment.CENTER)
@@ -211,8 +206,45 @@ class MapFrame(ft.Container):
 
     def clear_layers(self):
         self.circle_layer_ref.current.circles.clear()
+        self.label_ref.current.markers.clear()
 
-    def add_circle(self, lat, lon):
+    def add_circle(self, name_tag,lat, lon):
+
+        new_marker = map.Marker(
+            content=ft.Stack([
+                ft.Text(
+                    spans=[
+                        ft.TextSpan(
+                            f"{name_tag}",
+                            ft.TextStyle(
+                                size=12,
+                                weight=ft.FontWeight.BOLD,
+                                foreground=ft.Paint(
+                                color=ft.colors.BLACK,
+                                    stroke_width=2,
+                                    stroke_join=ft.StrokeJoin.ROUND,
+                                    style=ft.PaintingStyle.STROKE,
+                                ),
+                            ),
+                        ),
+                    ],
+                    text_align=ft.TextAlign.LEFT
+                ),
+                ft.Text(
+                    value=f"{name_tag}",
+                    # bgcolor=ft.colors.with_opacity(0.2, ft.colors.WHITE),
+                    color=ft.colors.WHITE,
+                    size=12,
+                    weight=ft.FontWeight.BOLD,
+                    text_align=ft.TextAlign.LEFT
+                ),
+            ],),
+            alignment=ft.alignment.top_right,
+            width=70,
+            coordinates=map.MapLatitudeLongitude(lat, lon)
+        )
+
+        self.label_ref.current.markers.append(new_marker)
 
         self.circle_layer_ref.current.circles.append(
             map.CircleMarker(
@@ -232,9 +264,11 @@ class MapFrame(ft.Container):
         spl = str(e.control.text).split(" ")
 
         try:
-            self.image_stack.src = f"https://raw.githack.com/Rzezimioszek/Files/main/pliki/graniczniki/{spl[0]}.jpg"
+            self.image_file.src = f"https://raw.githack.com/Rzezimioszek/Files/main/pliki/graniczniki/{spl[0]}.jpg"
+            self.image_label.value = f"{spl[0]}"
         except:
-            self.image_stack.src = "https://raw.githack.com/Rzezimioszek/Files/main/ortofotomapa/S17K/18/147891/87868.jpg"
+            self.image_file.src = "https://raw.githack.com/Rzezimioszek/Files/main/ortofotomapa/S17K/18/147891/87868.jpg"
+            self.image_label.value = ""
 
         print(f"click! {e.control.text}")
         self.main_map.move_to(
@@ -253,17 +287,16 @@ class MapFrame(ft.Container):
         for line in self.lines:
             spl = line.split("\t")
             str_btn = f"{spl[-3]} {spl[-1]} {spl[-2]}".replace("\r", "")
-            btn[i] = ft.TextButton(str_btn, on_click=lambda e: self.point_zoom(e))
-
-
+            btn[i] = ft.ElevatedButton(str_btn, on_click=lambda e: self.point_zoom(e))
+            name_tag = f"{spl[-3]}"
 
             if value in spl[0]:
                 self.listControl.controls.append(btn[i])
-                self.add_circle(float(spl[-1]), float(spl[-2]))
+                self.add_circle(name_tag, float(spl[-1]), float(spl[-2]))
                 i += 1
             elif value == "all":
                 self.listControl.controls.append(btn[i])
-                self.add_circle(float(spl[-1]), float(spl[-2]))
+                self.add_circle(name_tag, float(spl[-1]), float(spl[-2]))
                 i += 1
 
 
@@ -316,6 +349,8 @@ def main(page: ft.Page):
 
     page.add(ft.ResponsiveRow([label, query, submit], alignment=ft.MainAxisAlignment.CENTER))
     page.add(mf)
+
+    page.theme_mode = ft.ThemeMode.LIGHT
 
     page.update()
 
