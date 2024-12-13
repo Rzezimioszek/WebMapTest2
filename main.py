@@ -178,16 +178,31 @@ class MapFrame(ft.Container):
 
         def listBtn_click(e):
             self.listControl.visible = not self.listControl.visible
+            self.image_stack.visible = not self.image_stack.visible
+            self.main_map.visible = not self.main_map.visible
             page.update()
 
         listBtn = ft.ElevatedButton("Lista punktów", on_click=lambda e: listBtn_click(e))
 
-        self.listControl = ft.ListView(expand=1, spacing=10, padding=20)
+        self.listControl = ft.ListView(expand=1, spacing=5, padding=5)
+        # self.listControl.visible = False
+
+        self.image_stack = ft.Image(
+                               src="https://raw.githack.com/Rzezimioszek/Files/main/ortofotomapa/S17K/18/147891/87868.jpg",
+                               fit=ft.ImageFit.FIT_HEIGHT,
+                                height=400)
+
+        # extras_row = ft.ResponsiveRow([self.listControl, self.image_stack])
+        # extras_row.visible = False
         self.listControl.visible = False
+        self.image_stack.visible = False
 
 
         self.content = ft.Stack(controls=[ft.Column([self.main_map,
-                                          self.listControl])
+                                                     self.image_stack,
+                                                     self.listControl,
+
+                                                     ], horizontal_alignment=ft.CrossAxisAlignment.CENTER)
                                                  ,
                                           ft.Row([listBtn, elBtn], alignment=ft.MainAxisAlignment.CENTER, bottom=5, right=5),
                                           ]
@@ -198,6 +213,7 @@ class MapFrame(ft.Container):
         self.circle_layer_ref.current.circles.clear()
 
     def add_circle(self, lat, lon):
+
         self.circle_layer_ref.current.circles.append(
             map.CircleMarker(
                 radius=3,
@@ -211,7 +227,15 @@ class MapFrame(ft.Container):
         self.page.update()
 
     def point_zoom(self, e):
+
+
         spl = str(e.control.text).split(" ")
+
+        try:
+            self.image_stack.src = f"https://raw.githack.com/Rzezimioszek/Files/main/pliki/graniczniki/{spl[0]}.jpg"
+        except:
+            self.image_stack.src = "https://raw.githack.com/Rzezimioszek/Files/main/ortofotomapa/S17K/18/147891/87868.jpg"
+
         print(f"click! {e.control.text}")
         self.main_map.move_to(
             destination=map.MapLatitudeLongitude(float(spl[1]), float(spl[2])),
@@ -228,18 +252,18 @@ class MapFrame(ft.Container):
         i = 0
         for line in self.lines:
             spl = line.split("\t")
-            str_btn = f"{spl[0]} {spl[2]} {spl[1]}".replace("\r", "")
+            str_btn = f"{spl[-3]} {spl[-1]} {spl[-2]}".replace("\r", "")
             btn[i] = ft.TextButton(str_btn, on_click=lambda e: self.point_zoom(e))
 
 
 
             if value in spl[0]:
                 self.listControl.controls.append(btn[i])
-                self.add_circle(float(spl[2]), float(spl[1]))
+                self.add_circle(float(spl[-1]), float(spl[-2]))
                 i += 1
             elif value == "all":
                 self.listControl.controls.append(btn[i])
-                self.add_circle(float(spl[2]), float(spl[1]))
+                self.add_circle(float(spl[-1]), float(spl[-2]))
                 i += 1
 
 
@@ -280,8 +304,10 @@ def main(page: ft.Page):
         page.update()
 
     query = ft.TextField(label="Kod dostępu:",
+                         on_submit= lambda e: submit_on_clik(e),
                          col={"xs": 12, "sm": 12, "md": 4})
-    submit = ft.ElevatedButton("Wprowadź", on_click= lambda e: submit_on_clik(e),
+    submit = ft.ElevatedButton("Wprowadź",
+                               on_click= lambda e: submit_on_clik(e),
                                col={"xs": 12, "sm": 12, "md": 4})
 
     mf = MapFrame(page, lines)
