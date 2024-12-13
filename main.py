@@ -168,6 +168,10 @@ class MapFrame(ft.Container):
             self.listControl.visible = not self.listControl.visible
             self.img_stack.visible = not self.img_stack.visible
             self.main_map.visible = not self.main_map.visible
+            if listBtn.text == "Mapa":
+                listBtn.text = "Zdjęcia z ziemi"
+            else:
+                listBtn.text = "Mapa"
             page.update()
 
         listBtn = ft.ElevatedButton("Zdjęcia z ziemi",
@@ -175,14 +179,17 @@ class MapFrame(ft.Container):
                                     bgcolor=ft.Colors.RED,
                                     on_click=lambda e: listBtn_click(e))
 
-        self.listControl = ft.ListView(expand=1, spacing=5, padding=5)
+        self.listControl = ft.ListView(
+            expand=1,
+                                       spacing=5, padding=5)
         # self.listControl.visible = False
 
 
-        self.image_file = ft.Image(
+        self.image_file = ft.Image(#expand=1,
                                src="https://raw.githack.com/Rzezimioszek/Files/main/ortofotomapa/S17K/18/147891/87921.jpg",
                                fit=ft.ImageFit.FIT_HEIGHT,
-                                height=400,)
+                                height=400,
+        )
 
         self.image_label = ft.Text("",
                                    color=ft.Colors.WHITE,
@@ -202,12 +209,15 @@ class MapFrame(ft.Container):
         self.content = ft.Stack(controls=[ft.Column([self.main_map,
                                                      self.img_stack,
                                                      self.listControl,
-
-                                                     ], horizontal_alignment=ft.CrossAxisAlignment.CENTER)
+                                                     ], horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                                                    alignment=ft.MainAxisAlignment.END
+                                                    )
                                                  ,
                                           ft.Row([listBtn,
                                                   #elBtn
-                                                  ], alignment=ft.MainAxisAlignment.CENTER, bottom=5, right=5),
+                                                  ],
+                                                 alignment=ft.MainAxisAlignment.CENTER, bottom=5, right=5),
+
                                           ]
                                 , expand=1)
 
