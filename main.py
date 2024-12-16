@@ -11,10 +11,11 @@ class PointButton(ft.TextButton):
         super().__init__()
 
 class MapFrame(ft.Container):
-    def __init__(self, page: ft.Page, lines):
+    def __init__(self, page: ft.Page, lines, kody):
         super().__init__()
 
         self.lines = lines
+        self.kody = kody
 
         self.expand = 1
         self.border_radius = ft.border_radius.all(10)
@@ -302,20 +303,43 @@ class MapFrame(ft.Container):
         btn = dict()
 
         i = 0
-        for line in self.lines:
-            spl = line.split("\t")
-            str_btn = f"{spl[-3]} {spl[-1]} {spl[-2]}".replace("\r", "")
-            btn[i] = ft.ElevatedButton(str_btn, on_click=lambda e: self.point_zoom(e))
-            name_tag = f"{spl[-3]}"
+        #
+        lines = []
+        plot = ""
 
-            if value in spl[0]:
+        if value == "all":
+            for line in self.lines:
+                spl = line.split("\t")
+                str_btn = f"{spl[-3]} {spl[-1]} {spl[-2]}".replace("\r", "")
+                btn[i] = ft.ElevatedButton(str_btn, on_click=lambda e: self.point_zoom(e))
+                name_tag = f"{spl[-3]}"
+
                 self.listControl.controls.append(btn[i])
                 self.add_circle(name_tag, float(spl[-1]), float(spl[-2]))
                 i += 1
-            elif value == "all":
-                self.listControl.controls.append(btn[i])
-                self.add_circle(name_tag, float(spl[-1]), float(spl[-2]))
-                i += 1
+            return
+
+        for kod in self.kody:
+
+            if value in kod.split("\t")[0]:
+                plot = kod.split("\t")[-1]
+
+                for line in self.lines:
+
+
+                    spl = line.split("\t")
+                    str_btn = f"{spl[-3]} {spl[-1]} {spl[-2]}".replace("\r", "")
+                    btn[i] = ft.ElevatedButton(str_btn, on_click=lambda e: self.point_zoom(e))
+                    name_tag = f"{spl[-3]}"
+
+
+
+                    if plot in spl[0]:
+
+                        self.listControl.controls.append(btn[i])
+                        self.add_circle(name_tag, float(spl[-1]), float(spl[-2]))
+                        i += 1
+
 
 
 
@@ -332,8 +356,12 @@ def main(page: ft.Page):
         #lines = file.readlines()
 
     file = requests.get("https://rzezimioszek.github.io/Files/pliki/punkty.txt").text
-    print(str(file))
+    # print(str(file))
     lines = str(file).split("\n")
+
+    file = requests.get("https://rzezimioszek.github.io/Files/pliki/kod-dzialka.txt").text
+    print(str(file))
+    kody = str(file).split("\n")
 
     #with open("assets/punkty.txt", "r") as file:
     #with open("punkty.txt", "r") as file:
@@ -363,7 +391,7 @@ def main(page: ft.Page):
                                height=50,
                                col={"xs": 12, "sm": 12, "md": 1})
 
-    mf = MapFrame(page, lines)
+    mf = MapFrame(page, lines, kody)
     #mf.visible = False
     # main_row.controls.append(mf)
 
