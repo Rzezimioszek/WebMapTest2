@@ -64,7 +64,7 @@ class MapFrame(ft.Container):
         self.main_map = map.Map(
                     expand=True,
                     initial_center=map.MapLatitudeLongitude(50.4717587,19.3718856),
-                    initial_zoom=10,
+                    initial_zoom=13,
                     interaction_configuration=map.MapInteractionConfiguration(
                         flags=map.MapInteractiveFlag.ALL
                     ),
