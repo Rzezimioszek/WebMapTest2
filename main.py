@@ -197,7 +197,11 @@ class MapFrame(ft.Container):
                                           ft.Column([zoom_to_allBtn, listBtn,
                                                   #elBtn
                                                   ],
-                                                 alignment=ft.MainAxisAlignment.CENTER, bottom=5, right=5),
+                                                 alignment=ft.MainAxisAlignment.CENTER,
+                                                    horizontal_alignment=ft.CrossAxisAlignment.END,
+                                                    bottom=5, right=5
+                                                    ),
+
 
                                           ]
                                 , expand=1)
