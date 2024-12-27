@@ -26,7 +26,7 @@ class MapFrame(ft.Container):
         self.circle_layer_ref = ft.Ref[map.CircleLayer]()
         self.label_ref = ft.Ref[map.MarkerLayer]()
 
-        self.pkt = map.MapLatitudeLongitude(50.9476241, 23.1433150)
+        self.pkt = map.MapLatitudeLongitude(50.4717587,19.3718856),
 
         def handle_tap(e: map.MapTapEvent):
             print(e)
@@ -88,25 +88,6 @@ class MapFrame(ft.Container):
                             on_image_error=lambda e: print("TileLayer Error"),
                             pan_buffer=1,
                         ),
-                        map.RichAttribution(
-                            attributions=[
-                                map.TextSourceAttribution(
-                                    text="OpenStreetMap Contributors",
-                                    on_click=lambda e: e.page.launch_url(
-                                        "https://openstreetmap.org/copyright"
-                                    ),
-                                ),
-                                map.TextSourceAttribution(
-                                    text="Flet",
-                                    on_click=lambda e: e.page.launch_url("https://flet.dev"),
-                                ),
-                            ]
-                        ),
-                        map.SimpleAttribution(
-                            text="Flet",
-                            alignment=ft.alignment.top_right,
-                            on_click=lambda e: print("Clicked SimpleAttribution"),
-                        ),
                         map.MarkerLayer(
                             ref=marker_layer_ref,
                             markers=[
@@ -129,21 +110,6 @@ class MapFrame(ft.Container):
                                     color=ft.Colors.RED,
                                     border_color=ft.Colors.BLUE,
                                     border_stroke_width=4,
-                                ),
-                            ],
-                        ),
-                        map.PolylineLayer(
-                            polylines=[
-                                map.PolylineMarker(
-                                    border_stroke_width=3,
-                                    border_color=ft.Colors.RED,
-                                    gradient_colors=[ft.Colors.BLACK, ft.Colors.BLACK],
-                                    color=ft.Colors.with_opacity(0.6, ft.Colors.GREEN),
-                                    coordinates=[
-                                        map.MapLatitudeLongitude(10, 10),
-                                        map.MapLatitudeLongitude(30, 15),
-                                        map.MapLatitudeLongitude(25, 45),
-                                    ],
                                 ),
                             ],
                         ),
@@ -173,14 +139,26 @@ class MapFrame(ft.Container):
             self.main_map.visible = not self.main_map.visible
             if listBtn.text == "Mapa":
                 listBtn.text = "Zdjęcia z ziemi"
+                listBtn.tooltip = "Pokaż listę punktów"
+                zoom_to_allBtn.visible =True
+
             else:
                 listBtn.text = "Mapa"
+                listBtn.tooltip = "Pokaż mapę"
+                zoom_to_allBtn.visible = False
             page.update()
+
+
 
         listBtn = ft.ElevatedButton("Zdjęcia z ziemi",
                                     color=ft.Colors.WHITE,
                                     bgcolor=ft.Colors.RED,
                                     on_click=lambda e: listBtn_click(e))
+
+        listBtn.tooltip = "Pokaż listę punktów"
+
+        zoom_to_allBtn = ft.ElevatedButton("Pokaż całą mapę",
+                                    on_click=lambda e: self.main_map.move_to(map.MapLatitudeLongitude(50.4717587,19.3718856), 13))
 
         self.listControl = ft.ListView(
             expand=1,
@@ -216,7 +194,7 @@ class MapFrame(ft.Container):
                                                     alignment=ft.MainAxisAlignment.END
                                                     )
                                                  ,
-                                          ft.Row([listBtn,
+                                          ft.Column([zoom_to_allBtn, listBtn,
                                                   #elBtn
                                                   ],
                                                  alignment=ft.MainAxisAlignment.CENTER, bottom=5, right=5),
