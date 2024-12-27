@@ -63,8 +63,8 @@ class MapFrame(ft.Container):
 
         self.main_map = map.Map(
                     expand=True,
-                    initial_center=map.MapLatitudeLongitude(50.9476241, 23.1433150),
-                    initial_zoom=12,
+                    initial_center=map.MapLatitudeLongitude(50.4717587,19.3718856),
+                    initial_zoom=10,
                     interaction_configuration=map.MapInteractionConfiguration(
                         flags=map.MapInteractiveFlag.ALL
                     ),
@@ -82,7 +82,8 @@ class MapFrame(ft.Container):
                             # url_template="./{z}/{x}/{y}.jpg",
                             #url_template="https://raw.githack.com/Rzezimioszek/WebMapTest/main/{z}/{x}/{y}.png",
                             #url_template="https://raw.githack.com/Rzezimioszek/WebMapTest/main/{z}/{x}/{y}.jpg",
-                            url_template="https://raw.githack.com/Rzezimioszek/Files/main/ortofotomapa/S17K/{z}/{x}/{y}.jpg",
+                            # url_template="https://raw.githack.com/Rzezimioszek/Files/main/ortofotomapa/S17K/{z}/{x}/{y}.jpg",
+                            url_template="https://raw.githack.com/Rzezimioszek/Files/main/ortofotomapa/DK78/{z}/{x}/{y}.jpg",
                             #url_template="https://raw.githack.com/Rzezimioszek/Files/main/ortofotomapa/S17K2/{z}/{x}/{y}.jpg",
                             on_image_error=lambda e: print("TileLayer Error"),
                             pan_buffer=1,
