@@ -25,6 +25,7 @@ class MapFrame(ft.Container):
         marker_layer_ref = ft.Ref[map.MarkerLayer]()
         self.circle_layer_ref = ft.Ref[map.CircleLayer]()
         self.label_ref = ft.Ref[map.MarkerLayer]()
+        self.lr_ref = ft.Ref[map.PolylineLayer]()
 
         self.pkt = map.MapLatitudeLongitude(50.4717587,19.3718856),
 
@@ -35,7 +36,7 @@ class MapFrame(ft.Container):
 
                 self.pkt = e.coordinates
 
-                marker_layer_ref.current.markers.clear()
+                """marker_layer_ref.current.markers.clear()
                 marker_layer_ref.current.markers.append(
                         map.Marker(
                             content=ft.Icon(
@@ -43,7 +44,7 @@ class MapFrame(ft.Container):
                             ),
                             coordinates=e.coordinates,
                         )
-                    )
+                    )"""
 
             # webbrowser.open(f"https://www.google.pl/maps/place/{e.coordinates.latitude:.5f},{e.coordinates.longitude:.5f}")
             page.update()
@@ -85,8 +86,12 @@ class MapFrame(ft.Container):
                             # url_template="https://raw.githack.com/Rzezimioszek/Files/main/ortofotomapa/S17K/{z}/{x}/{y}.jpg",
                             url_template="https://raw.githack.com/Rzezimioszek/Files/main/ortofotomapa/DK78/{z}/{x}/{y}.jpg",
                             #url_template="https://raw.githack.com/Rzezimioszek/Files/main/ortofotomapa/S17K2/{z}/{x}/{y}.jpg",
-                            on_image_error=lambda e: print("TileLayer Error"),
+                            #on_image_error=lambda e: print("TileLayer Error"),
                             pan_buffer=1,
+                        ),
+                        map.PolylineLayer(
+                            ref=self.lr_ref,
+                            polylines=[]
                         ),
                         map.MarkerLayer(
                             ref=marker_layer_ref,
@@ -103,16 +108,9 @@ class MapFrame(ft.Container):
                         ),
                         map.CircleLayer(
                             ref=self.circle_layer_ref,
-                            circles=[
-                                map.CircleMarker(
-                                    radius=10,
-                                    coordinates=map.MapLatitudeLongitude(10,10),
-                                    color=ft.Colors.RED,
-                                    border_color=ft.Colors.BLUE,
-                                    border_stroke_width=4,
-                                ),
-                            ],
+                            circles=[],
                         ),
+
                     ],
                 )
         map_row = ft.Row([
@@ -186,14 +184,17 @@ class MapFrame(ft.Container):
         self.listControl.visible = False
         self.img_stack.visible = False
 
+        self.add_lr()
+        self.pb = ft.Row([ft.ProgressRing(width=16, height=16, stroke_width = 2), ft.Text("Ładowanie danych")])
+        self.pb.visible = False
+
 
         self.content = ft.Stack(controls=[ft.Column([self.main_map,
                                                      self.img_stack,
                                                      self.listControl,
                                                      ], horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                                                     alignment=ft.MainAxisAlignment.END
-                                                    )
-                                                 ,
+                                                    ),
                                           ft.Column([zoom_to_allBtn, listBtn,
                                                   #elBtn
                                                   ],
@@ -201,15 +202,55 @@ class MapFrame(ft.Container):
                                                     horizontal_alignment=ft.CrossAxisAlignment.END,
                                                     bottom=5, right=5
                                                     ),
-
-
+                                          ft.Column([self.pb], top=5, left=5)
                                           ]
+
                                 , expand=1)
 
 
     def clear_layers(self):
         self.circle_layer_ref.current.circles.clear()
         self.label_ref.current.markers.clear()
+
+    def add_lr(self):
+
+        file = requests.get("https://rzezimioszek.github.io/Files/pliki/lr.txt").text
+        lines = str(file).split("\n")
+
+        current = ""
+        temp_l = []
+        lrs = []
+
+        for line in lines:
+            temp = line.split("\t")
+            if current == "":
+                current = temp[0]
+
+            if current == temp[0]:
+                temp_l.append(map.MapLatitudeLongitude(float(temp[3]), float(temp[2])))
+            else:
+                if len(temp_l) > 0:
+                    lrs.append(temp_l.copy())
+                    temp_l.clear()
+                current = temp[0]
+                temp_l.append(map.MapLatitudeLongitude(float(temp[3]), float(temp[2])))
+        lrs.append(temp_l)
+
+        # print(lrs)
+
+        i = 0
+
+        for lr in lrs:
+            i += 1
+            print(i, lr)
+            self.lr_ref.current.polylines.append(map.PolylineMarker(
+                border_stroke_width=2,
+                border_color=ft.Colors.RED,
+                color=ft.Colors.RED,
+                coordinates=[
+                    *lr
+                ]
+            ))
 
     def add_circle(self, name_tag,lat, lon):
 
@@ -283,6 +324,7 @@ class MapFrame(ft.Container):
     def load_values(self, value):
 
         self.listControl.controls.clear()
+        self.pb.visible = True
 
         btn = dict()
 
@@ -301,11 +343,13 @@ class MapFrame(ft.Container):
                 self.listControl.controls.append(btn[i])
                 self.add_circle(name_tag, float(spl[-1]), float(spl[-2]))
                 i += 1
+
+            self.pb.visible = False
             return
 
         for kod in self.kody:
 
-            if value in kod.split("\t")[0]:
+            if value == kod.split("\t")[0]: # change
                 plot = kod.split("\t")[-1]
 
                 for line in self.lines:
@@ -323,6 +367,7 @@ class MapFrame(ft.Container):
                         self.listControl.controls.append(btn[i])
                         self.add_circle(name_tag, float(spl[-1]), float(spl[-2]))
                         i += 1
+        self.pb.visible = False
 
 
 
@@ -344,7 +389,7 @@ def main(page: ft.Page):
     lines = str(file).split("\n")
 
     file = requests.get("https://rzezimioszek.github.io/Files/pliki/kod-dzialka.txt").text
-    print(str(file))
+    # print(str(file))
     kody = str(file).split("\n")
 
     #with open("assets/punkty.txt", "r") as file:
