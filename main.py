@@ -84,7 +84,8 @@ class MapFrame(ft.Container):
                             #url_template="https://raw.githack.com/Rzezimioszek/WebMapTest/main/{z}/{x}/{y}.png",
                             #url_template="https://raw.githack.com/Rzezimioszek/WebMapTest/main/{z}/{x}/{y}.jpg",
                             # url_template="https://raw.githack.com/Rzezimioszek/Files/main/ortofotomapa/S17K/{z}/{x}/{y}.jpg",
-                            url_template="https://raw.githack.com/Rzezimioszek/Files/main/ortofotomapa/DK78/{z}/{x}/{y}.jpg",
+                            url_template="https://raw.githubusercontent.com/Rzezimioszek/Files/refs/heads/main/ortofotomapa/DK78/{z}/{x}/{y}.jpg",
+                            #url_template="https://mapy.geoportal.gov.pl/wss/ext/OSM/BaseMap/tms/1.0.0/osm_3857/GLOBAL_WEBMERCATOR/{z}/{x}/{y}.png",
                             #url_template="https://raw.githack.com/Rzezimioszek/Files/main/ortofotomapa/S17K2/{z}/{x}/{y}.jpg",
                             #on_image_error=lambda e: print("TileLayer Error"),
                             pan_buffer=1,
@@ -165,7 +166,7 @@ class MapFrame(ft.Container):
 
 
         self.image_file = ft.Image(#expand=1,
-                               src="https://raw.githack.com/Rzezimioszek/Files/main/ortofotomapa/S17K/18/147891/87921.jpg",
+                               src="https://raw.githubusercontent.com/Rzezimioszek/Files/main/ortofotomapa/S17K/18/147891/87921.jpg",
                                fit=ft.ImageFit.FIT_HEIGHT,
                                 height=400,
         )
@@ -308,10 +309,10 @@ class MapFrame(ft.Container):
         spl = str(e.control.text).split(" ")
 
         try:
-            self.image_file.src = f"https://raw.githack.com/Rzezimioszek/Files/main/pliki/graniczniki/{spl[0]}.jpg"
+            self.image_file.src = f"https://raw.githubusercontent.com/Rzezimioszek/Files/main/pliki/graniczniki/{spl[0]}.jpg"
             self.image_label.value = f"{spl[0]}"
         except:
-            self.image_file.src = "https://raw.githack.com/Rzezimioszek/Files/main/ortofotomapa/S17K/18/147891/87921.jpg"
+            self.image_file.src = "https://raw.githubusercontent.com/Rzezimioszek/Files/main/ortofotomapa/S17K/18/147891/87921.jpg"
             self.image_label.value = ""
 
         #print(f"click! {e.control.text}")
