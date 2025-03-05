@@ -1,2 +1,1 @@
-# WebMapTest2
-[Strona](https://rzezimioszek.github.io/WebMapTest2/)
+# [WebMapTest2](https://rzezimioszek.github.io/WebMapTest2/)
